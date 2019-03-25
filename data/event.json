@@ -1,0 +1,90 @@
+{
+  "resource": "/light/{id}",
+  "path": "/light/TEDyLight",
+  "httpMethod": "POST",
+  "headers": {
+    "Accept": "application/json",
+    "accept-encoding": "gzip, deflate",
+    "cache-control": "no-cache",
+    "Content-Type": "text/plain",
+    "Host": "0cy03xoouj.execute-api.eu-west-1.amazonaws.com",
+    "Postman-Token": "21174925-4b15-4ed1-84e6-0553086b105b",
+    "User-Agent": "PostmanRuntime/7.6.0",
+    "X-Amzn-Trace-Id": "Root=1-5c989840-a542127c3981f868343a5cf4",
+    "X-Forwarded-For": "88.128.81.106",
+    "X-Forwarded-Port": "443",
+    "X-Forwarded-Proto": "https"
+  },
+  "multiValueHeaders": {
+    "Accept": [
+      "application/json"
+    ],
+    "accept-encoding": [
+      "gzip, deflate"
+    ],
+    "cache-control": [
+      "no-cache"
+    ],
+    "Content-Type": [
+      "text/plain"
+    ],
+    "Host": [
+      "0cy03xoouj.execute-api.eu-west-1.amazonaws.com"
+    ],
+    "Postman-Token": [
+      "21174925-4b15-4ed1-84e6-0553086b105b"
+    ],
+    "User-Agent": [
+      "PostmanRuntime/7.6.0"
+    ],
+    "X-Amzn-Trace-Id": [
+      "Root=1-5c989840-a542127c3981f868343a5cf4"
+    ],
+    "X-Forwarded-For": [
+      "88.128.81.106"
+    ],
+    "X-Forwarded-Port": [
+      "443"
+    ],
+    "X-Forwarded-Proto": [
+      "https"
+    ]
+  },
+  "queryStringParameters": null,
+  "multiValueQueryStringParameters": null,
+  "pathParameters": {
+    "id": "TEDyLight"
+  },
+  "stageVariables": null,
+  "requestContext": {
+    "resourceId": "gwwwk6",
+    "resourcePath": "/light/{id}",
+    "httpMethod": "POST",
+    "extendedRequestId": "XFy6GFuBDoEFx5g=",
+    "requestTime": "25/Mar/2019:08:58:40 +0000",
+    "path": "/dev/light/TEDyLight",
+    "accountId": "736519287593",
+    "protocol": "HTTP/1.1",
+    "stage": "dev",
+    "domainPrefix": "0cy03xoouj",
+    "requestTimeEpoch": 1553504320672,
+    "requestId": "2f696a53-4edc-11e9-910a-2b079e998a1b",
+    "identity": {
+      "cognitoIdentityPoolId": null,
+      "accountId": null,
+      "cognitoIdentityId": null,
+      "caller": null,
+      "sourceIp": "88.128.81.106",
+      "accessKey": null,
+      "cognitoAuthenticationType": null,
+      "cognitoAuthenticationProvider": null,
+      "userArn": null,
+      "userAgent": "PostmanRuntime/7.6.0",
+      "user": null
+    },
+    "domainName": "0cy03xoouj.execute-api.eu-west-1.amazonaws.com",
+    "apiId": "0cy03xoouj"
+  },
+  "body": "{\n\t\"mode\": \"DISCO\",\n\t\"isOn\": false\n}",
+  "isBase64Encoded": false
+}
