@@ -1,31 +1,21 @@
 const uuidv1 = require("uuid/v1");
-let awsIot = null;
-try {
-  awsIot = require("aws-iot-device-sdk");
-} catch (e) {
-  console.log("ERROR: init awsIot", e);
-}
+let awsIot = require("aws-iot-device-sdk");
 
 class DeviceHandler {
-  constructor() {}
+  constructor(thingName) {
+    this.thingName = thingName;
+    this.messageCount = 0;
+  }
 
-  publishState(thingName, desiredState, disconnect = true) {
+  publishState(desiredState) {
     const that = this;
     return that.getDevice().then(device => {
-      device.subscribe(`$aws/things/${thingName}/shadow/update/accepted`);
-      device.subscribe(`$aws/things/${thingName}/shadow/update/rejected`);
-      device.on("message", (topic, payload) => {
-        console.log("DEBUG: message " + topic);
-        if (
-          disconnect &&
-          (topic.indexOf("accepted") > -1 || topic.indexOf("rejected") > -1)
-        ) {
-          device.end();
-        }
-      });
-      console.log("DEBUG: publishing update");
+      device.subscribe(`$aws/things/${that.thingName}/shadow/update/accepted`);
+      device.subscribe(`$aws/things/${that.thingName}/shadow/update/rejected`);
+      console.log("DEBUG: publishing update: ", desiredState);
+      that.messageCount++;
       device.publish(
-        `$aws/things/${thingName}/shadow/update`,
+        `$aws/things/${that.thingName}/shadow/update`,
         JSON.stringify({
           state: {
             desired: desiredState
@@ -36,6 +26,7 @@ class DeviceHandler {
   }
 
   getDevice() {
+    const that = this;
     if (!this.promise) {
       this.promise = new Promise(resolve => {
         const device = awsIot.device({
@@ -49,6 +40,16 @@ class DeviceHandler {
           console.log("DEBUG: connected");
           resolve(device);
         });
+        device.on("message", (topic, payload) => {
+          console.log(
+            "DEBUG: message " + topic + " payload " + payload.toString()
+          );
+          that.messageCount--;
+          if ("$aws/things/" + that.thingName + "/shadow/get/accepted") {
+            const state = JSON.parse(payload.toString());
+            this.state = state.state;
+          }
+        });
       });
     }
     return this.promise;
@@ -58,23 +59,47 @@ class DeviceHandler {
     return request.directive.endpoint.cookie.thingName;
   }
 
-  async getDeviceState(thingName, disconnect = true) {
-    const device = await this.getDevice();
-    device.subscribe("$aws/things/" + thingName + "/shadow/get/accepted");
-    const promise = new Promise(resolve => {
-      device.on("message", (topic, payload) => {
-        console.log(
-          "DEBUG: message " + topic + " payload " + payload.toString()
-        );
-        const state = JSON.parse(payload.toString());
-        if (disconnect) {
-          device.end();
-        }
-        resolve(state.state);
+  getPendingMessageCount() {
+    // console.log("DEBUG: messageCount: ", this.messageCount);
+    return this.messageCount;
+  }
+
+  awaitMessages() {
+    const that = this;
+    return this.getDevice().then(() => {
+      return new Promise((resolve, reject) => {
+        let tries = 0;
+        const interval = setInterval(() => {
+          const messageCount = that.getPendingMessageCount();
+          if (messageCount === 0) {
+            clearInterval(interval);
+            resolve();
+          } else if (tries >= 100) {
+            clearInterval(interval);
+            reject("timeout");
+          }
+          tries++;
+        }, 10);
       });
     });
-    device.publish("$aws/things/" + thingName + "/shadow/get");
-    return promise;
+  }
+
+  disconnect() {
+    return this.getDevice().then(device => {
+      device.end();
+    });
+  }
+
+  getDeviceState() {
+    const that = this;
+    this.getDevice().then(device => {
+      device.subscribe(
+        "$aws/things/" + that.thingName + "/shadow/get/accepted"
+      );
+      console.log("DEBUG: publishing get");
+      that.messageCount++;
+      device.publish("$aws/things/" + that.thingName + "/shadow/get");
+    });
   }
 }
 
