@@ -43,8 +43,6 @@ class DeviceHandler {
           host: "a1idkifp80vw18-ats.iot.eu-west-1.amazonaws.com",
           region: "eu-west-1",
           protocol: "wss",
-          // accessKeyId: "AKIAJRMML3WMGQSADWKA",
-          // secretKey: "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",
           debug: true
         });
         device.on("connect", () => {
