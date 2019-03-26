@@ -33,8 +33,12 @@ module.exports = async event => {
       .catch(reason => {
         deviceHandler.disconnect();
         console.log("ERROR: in promisechain", reason);
+        let responseCode = 500;
+        if (reason === "timeout") {
+          responseCode = 504;
+        }
         return Promise.resolve({
-          statusCode: 400,
+          statusCode: responseCode,
           body: JSON.stringify({ message: `error in promise chain: ${reason}` })
         });
       });
